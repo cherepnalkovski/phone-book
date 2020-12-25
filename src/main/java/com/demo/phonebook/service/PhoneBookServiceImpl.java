@@ -2,14 +2,18 @@ package com.demo.phonebook.service;
 
 import com.demo.phonebook.model.Contact;
 import com.demo.phonebook.repository.PhoneBookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
+
+import javax.persistence.criteria.Predicate;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 @Service
-public class PhoneBookServiceImpl implements PhoneBookService
-{
+public class PhoneBookServiceImpl implements PhoneBookService {
     private final PhoneBookRepository phoneBookRepository;
 
     public PhoneBookServiceImpl(PhoneBookRepository phoneBookRepository) {
@@ -17,25 +21,27 @@ public class PhoneBookServiceImpl implements PhoneBookService
     }
 
     @Override
-    public void saveContact(Contact contact) {
-        // TODO: Validation
-        phoneBookRepository.save(contact);
+    public Contact saveContact(@Valid Contact contact) {
+        return phoneBookRepository.save(contact);
     }
 
     @Override
-    public void getContact(String name, String phoneNumber) {
-        // TODO : validation
-        if(ObjectUtils.isEmpty(name) || !phoneValidation(phoneNumber))
-        {
-            // throw exception
-        }
-
-        phoneBookRepository.findByNameAndNumber(name, phoneNumber);
+    public List<Contact> getContact(Optional<String> name, Optional<String> phoneNumber) {
+        return phoneBookRepository.findAll(filterContacts(name, phoneNumber));
     }
 
-    private boolean phoneValidation(String phoneNumber)
-    {
-        return true;
-    }
+    private Specification<Contact> filterContacts(Optional<String> name, Optional<String> phoneNumber) {
 
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (name.isPresent() && (name.get().length() > 0)) {
+                predicates.add(criteriaBuilder.and(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.get().toLowerCase() + "%")));
+            }
+            if (phoneNumber.isPresent() &&(phoneNumber.get().length() > 0)) {
+                predicates.add(criteriaBuilder.and(criteriaBuilder.like(criteriaBuilder.lower(root.get("phoneNumber")), phoneNumber.get().toLowerCase())));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
 }
