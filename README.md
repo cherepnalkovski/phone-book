@@ -2,7 +2,7 @@
 
 Minimal phone book application
 
-##Features
+## Features
 - create contact 
 - get contact
 
@@ -24,10 +24,14 @@ Minimal phone book application
 | /phonebook/contacts   | GET    | Returns filtered contacts.       | phonebook/contacts?name=vladimir&phoneNumber=+38970123456                                                                          | `[{"id": 1,"firstName": "Vladimir","phoneNumber": "+38970555888"}]`                                   |
 | /phonebook/contacts   | POST   | Create a new contact.       | `{"name": "Vladimir", "phoneNumber": "+38970555888"}` | `{"id": 1,"firstName": "Vladimir","phoneNumber": "+38970555888"}` |
 
+## Used technologies
+* Java 8
+* PostgreSQL
+* Spring Boot
+* Spring JPA Specification and validation
+* Test containter for integration test with inmemory db.
+
 ## Happy with
-* Ability to use Singleton dependencies to create an in-memory data store.
-* JavaScript serialization is as I'd like out of the box.
-* Component based architecture, styling is done at component level.
-* React side is speedy!
-* Well structured projects.
-* Included Delete functionality, not in spec.
+* Ability to use Spring JPA Specification
+* Ability to return custom exception using @ControllerAdvice
+* Abitity to extend with another service or repository.
