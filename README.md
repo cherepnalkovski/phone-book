@@ -1,6 +1,6 @@
 # phone-book
 
-Minimal phone book application
+Mini phone book application
 
 ## Features
 - create contact 
